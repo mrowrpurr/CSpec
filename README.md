@@ -1,6 +1,6 @@
 # CSpec
 
-> Test Framework for CMake
+> Testing Framework for CMake
 
 ![CSpec](Images/CSpec.png)
 
