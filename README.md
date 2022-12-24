@@ -4,6 +4,25 @@
 
 ![CSpec](Images/CSpec.png)
 
+- [CSpec](#cspec)
+- [What?](#what)
+- [Install](#install)
+  - [Get from `vcpkg`](#get-from-vcpkg)
+    - [`vcpkg.json`](#vcpkgjson)
+    - [`vcpkg-configuration.json`](#vcpkg-configurationjson)
+  - [Add to `CMakeLists.txt`](#add-to-cmakeliststxt)
+- [Write Tests](#write-tests)
+    - [`MySpecs.cmake`](#myspecscmake)
+    - [Assertions](#assertions)
+
+# What?
+
+[`CMake`](https://cmake.org/) scripts can be pretty complex.
+
+I wanted to be able to [test-drive](https://en.wikipedia.org/wiki/Test-driven_development) my CMake scripts, so I wrote this.
+
+It's *less than* `80 lines of code`, but provides a lovely test interface.
+
 # Install
 
 `CSpec` [*will be*] available via `vcpkg` (from `mrowrpurr`'s [`vcpkg` repo](https://github.com/mrowrpurr/vcpkg))
@@ -106,3 +125,9 @@ function(test_this_should_fail)
     message(SEND_ERROR "This message will show up in test output")
 endfunction()
 ```
+
+### Assertions
+
+At this time, there are no custom assertions written.
+
+Simply `message(SEND_ERROR "something")` or `message(FATAL_ERROR "something)` to fail a test.
