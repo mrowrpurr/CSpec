@@ -80,21 +80,28 @@ add_cspec_suite(specs/MySpecs)
 ### `MySpecs.cmake`
 
 ```cmake
-set(SomeGlobalVariable)
-
 function(setup)
-    # This will be run before each test run.
-    # Note tests are run in SEPARATE processes and do not share variables.
-    set(SomeGlobalV)
+    # This runs before each test function is run.
+    # Note: tests are run in SEPARATE processes and do not share variables.
+    do_some_setup()
+    set(SomeSharedVariable "Shared Value" PARENT_SCOPE)
+endfunction()
+
+function(teardown)
+    # This runs after each test function is run (even if the test fails).
+    do_some_cleanup()
 endfunction()
 
 function(test_this_should_pass)
-    # because this function starts with "test_"
+    # Because this function starts with "test_"
     # it will be automatically run!
+    
+    # Also, setup() runs before this so we have access to shared variables:
+    message("I got a value from setup() - ${SomeSharedVariable}")
 endfunction()
 
 function(test_this_should_fail)
-    # anything which will cause the program to fail
+    # Anything which will cause the program to fail
     # will cause the test to fail:
     message(SEND_ERROR "This message will show up in test output")
 endfunction()
