@@ -1,0 +1,1 @@
+add_cspec_suite(HelloCSpec)
