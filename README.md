@@ -26,7 +26,7 @@ It's *less than* [`80 lines of code`](cmake/CSpec.cmake), but provides a lovely 
 
 # Install
 
-`CSpec` [*will be*] available via `vcpkg` (from `mrowrpurr`'s [`vcpkg` repo](https://github.com/mrowrpurr/vcpkg))
+`CSpec` is available via `vcpkg` (from `mrowrpurr`'s [`vcpkg` repo](https://github.com/mrowrpurr/vcpkg-repo))
 
 ## Get from `vcpkg`
 
@@ -41,7 +41,7 @@ It's *less than* [`80 lines of code`](cmake/CSpec.cmake), but provides a lovely 
 ```json
 {
     "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
-    "name": "my-project",
+    "name": "hello-world",
     "version-string": "0.0.1",
     "dependencies": [
         "cspec"
@@ -66,8 +66,8 @@ It's *less than* [`80 lines of code`](cmake/CSpec.cmake), but provides a lovely 
   "registries": [
     {
       "kind": "git",
-      "repository": "https://github.com/mrowrpurr/vcpkg.git",
-      "baseline": "< INSERT THE LATEST COMMIT SHA >",
+      "repository": "https://github.com/mrowrpurr/vcpkg-repo.git",
+      "baseline": "fbc7feae4c02684332fe6c9fec8320bef34729b3",
       "packages": [
         "cspec"
       ]
