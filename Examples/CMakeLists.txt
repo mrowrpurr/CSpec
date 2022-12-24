@@ -1,1 +1,1 @@
-add_cspec_suite(HelloCSpec)
+add_cspec_suite(HelloCSpec DEBUG)

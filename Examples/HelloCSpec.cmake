@@ -1,3 +1,11 @@
+function(setup)
+    message("I run before the test")
+endfunction()
+
+function(teardown)
+    message("I run after the test")
+endfunction()
+
 function(test_something)
     message("!!!!!!!!!! YOU CALLED THE test_something TEST FUNCTION!")
 endfunction()
