@@ -97,6 +97,8 @@ In your `CMakeLists.txt`, specify the file:
 add_cspec_suite(MySpecs)
 ```
 
+A CMake target named `MySpecs` will be available. Build it to run the tests.
+
 ### `MySpecs.cmake`
 
 ```cmake
