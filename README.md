@@ -22,7 +22,7 @@
 
 I wanted to be able to [test-drive](https://en.wikipedia.org/wiki/Test-driven_development) my CMake scripts, so I wrote this.
 
-It's *less than* [`80 lines of code`](CSpec.cmake), but provides a lovely test interface.
+It's *less than* [`80 lines of code`](cmake/CSpec.cmake), but provides a lovely test interface.
 
 # Install
 

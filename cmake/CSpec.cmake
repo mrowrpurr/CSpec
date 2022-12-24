@@ -1,6 +1,6 @@
+set(CSpecVersion 0.0.1)
 cmake_policy(SET CMP0057 NEW) # IN_LIST support
 cmake_policy(SET CMP0011 NEW) # This appears when enabling 57
-
 set(CSpecModulePath "${CMAKE_CURRENT_LIST_FILE}")
 
 function(__cspec_pretty_print_output raw_output)
