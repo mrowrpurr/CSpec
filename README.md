@@ -13,6 +13,7 @@
   - [Add to `CMakeLists.txt`](#add-to-cmakeliststxt)
 - [Write Tests](#write-tests)
     - [`MySpecs.cmake`](#myspecscmake)
+    - [Example Output](#example-output)
     - [Assertions](#assertions)
 
 # What?
@@ -21,7 +22,7 @@
 
 I wanted to be able to [test-drive](https://en.wikipedia.org/wiki/Test-driven_development) my CMake scripts, so I wrote this.
 
-It's *less than* `80 lines of code`, but provides a lovely test interface.
+It's *less than* [`80 lines of code`](CSpec.cmake), but provides a lovely test interface.
 
 # Install
 
@@ -124,6 +125,19 @@ function(test_this_should_fail)
     # will cause the test to fail:
     message(SEND_ERROR "This message will show up in test output")
 endfunction()
+```
+
+### Example Output
+
+```
+[build]   [FAIL] test_should_fail
+[build]       CMake Error at C:/Users/mrowr/AppData/Local/Temp/cspec/ec308d4b3c337173b30c142dfd5ff1e7bf9dbe82/HelloCSpec.cmake:16 (message):
+[build]         This should be a failure message!
+[build]       Call Stack (most recent call first):
+[build]         C:/Code/mrowrpurr/CSpec/CSpec.cmake:52:EVAL:1 (test_should_fail)
+[build]         C:/Code/mrowrpurr/CSpec/CSpec.cmake:52 (cmake_language)
+[build]         C:/Users/mrowr/AppData/Local/Temp/cspec/ec308d4b3c337173b30c142dfd5ff1e7bf9dbe82/HelloCSpec.cmake:19 (__cpec_test_suite_end)
+[build]   [PASS] test_should_pass
 ```
 
 ### Assertions
