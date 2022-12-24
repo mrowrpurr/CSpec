@@ -80,7 +80,7 @@ It's *less than* [`80 lines of code`](cmake/CSpec.cmake), but provides a lovely 
 
 ## Add to `CMakeLists.txt`
 
-Once you've added `cspec` as a `vcpkg` dependency, simply install it via `CMake`:
+Once you've added `cspec` as a `vcpkg` dependency, load the package in `CMake`:
 
 ```cmake
 find_package(CSpec CONFIG REQUIRED)
