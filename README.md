@@ -94,7 +94,7 @@ In your `CMakeLists.txt`, specify the file:
 
 ```cmake
 # You can leave off the .cmake extension
-add_cspec_suite(specs/MySpecs)
+add_cspec_suite(MySpecs)
 ```
 
 ### `MySpecs.cmake`
