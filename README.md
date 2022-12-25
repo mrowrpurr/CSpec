@@ -1,3 +1,10 @@
+#### TODO
+
+- [ ] Make work with `CMAKE_CURRENT_SOURCE_DIR` and `CMAKE_SOURCE_DIR`
+- [ ] Try using `include` instead of making temp files!
+
+---
+
 # CSpec
 
 > Testing Framework for CMake
