@@ -12,5 +12,5 @@ function(test_should_pass)
 endfunction()
 
 function(test_should_fail)
-    message(SEND_ERROR "This should be a failure message!")
+    message(FATAL_ERROR "This should be a failure message!")
 endfunction()

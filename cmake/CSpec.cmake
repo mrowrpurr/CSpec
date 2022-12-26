@@ -1,79 +1,92 @@
-set(CSpecVersion 0.0.1)
-cmake_policy(SET CMP0057 NEW) # IN_LIST support
-cmake_policy(SET CMP0011 NEW) # This appears when enabling 57
+# [Variables]
+
+set(CSpecVersion 0.2.0)
 set(CSpecModulePath "${CMAKE_CURRENT_LIST_FILE}")
 
-function(__cspec_pretty_print_output raw_output)
-    if(NOT "${raw_output}" STREQUAL "")
-        string(REGEX REPLACE "\n" ";" output_lines "${raw_output}")
-        set(i 0)
-        foreach(line ${output_lines})
-            if(NOT line MATCHES "^[ ]+$")
-                if(i EQUAL 0)
-                    string(APPEND output "    ${line}")
-                else()
-                    string(APPEND output "\n    ${line}")
-                endif()
-            endif()
-            math(EXPR i "${i}+1")
-        endforeach()
-        message("${output}")
-    endif()
-endfunction()
+if(NOT DEFINED CSPEC_DEBUG_LEVEL)
+    set(CSPEC_DEBUG_LEVEL TRACE)
+endif()
 
-function(__cpec_test_suite_end)
-    if(LIST_TEST_FUNCTIONS)
-        get_property(cmds GLOBAL PROPERTY COMMANDS)
-        foreach(cmd ${cmds})
-            if(cmd MATCHES ^test_)
-                message("${cmd}")
-            endif()
-        endforeach()
-    elseif(DEFINED RUN_TEST_FUNCTION_WRAPPER)
-        execute_process(
-            COMMAND "${CMAKE_COMMAND}" -DRUN_TEST_FUNCTION=${RUN_TEST_FUNCTION_WRAPPER} -P "${CMAKE_CURRENT_LIST_FILE}"
-            RESULT_VARIABLE result OUTPUT_VARIABLE raw_stdout ERROR_VARIABLE  raw_stderr
-        )
-        if(${result} EQUAL 0)
-            message("[PASS] ${RUN_TEST_FUNCTION_WRAPPER}")
-            # TODO: add_cspec_suite(SomeSpecs VERBOSE)
-            # __cspec_pretty_print_output("${raw_stdout}")
-            # __cspec_pretty_print_output("${raw_stderr}")
-        else()
-            message("[FAIL] ${RUN_TEST_FUNCTION_WRAPPER}")
-            __cspec_pretty_print_output("${raw_stdout}")
-            __cspec_pretty_print_output("${raw_stderr}")
-        endif()
-    elseif(DEFINED RUN_TEST_FUNCTION)
-        get_property(cmds GLOBAL PROPERTY COMMANDS)
-        if("setup" IN_LIST cmds)
-            setup()
-        endif()
-        cmake_language(EVAL CODE "${RUN_TEST_FUNCTION}()")
-        if("teardown" IN_LIST cmds)
-            teardown()
-        endif()
-    endif()
-endfunction()
+# [Helpers]
 
-function(add_cspec_suite CSPEC_FILE)
-    file(REAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}" current_path)
-    string(SHA1 temp_folder_hash "${current_path}")
-    set(temp_folder "$ENV{TEMP}/cspec/${temp_folder_hash}")
-    set(temp_file "${temp_folder}/${CSPEC_FILE}.cmake")
-    file(READ "${CSPEC_FILE}.cmake" content)
-    file(REAL_PATH "${CSpecModulePath}" cspec_module_path)
-    string(CONFIGURE [=[
-include("@cspec_module_path@") 
-@content@
-__cpec_test_suite_end()
-    ]=] temp_file_content @ONLY)
-    file(WRITE "${temp_file}" "${temp_file_content}")
-    execute_process(COMMAND "${CMAKE_COMMAND}" -DLIST_TEST_FUNCTIONS=ON -P "${temp_file}" ERROR_VARIABLE raw_output)
-    string(STRIP "${raw_output}" output)
-    separate_arguments(test_functions WINDOWS_COMMAND "${output}")
-    add_custom_target(${CSPEC_FILE}) # We make an assumption that CSPEC_FILE is a valid target name, it could be "foo/bar/baz.cmake" (FIXME)
-    foreach(test_fn ${test_functions})
-        add_custom_command(TARGET ${CSPEC_FILE} POST_BUILD COMMAND "${CMAKE_COMMAND}" -DRUN_TEST_FUNCTION_WRAPPER=${test_fn} -P "${temp_file}" VERBATIM)
+macro(__cspec_debug text)
+    if(CSPEC_DEBUG)
+        message(${CSPEC_DEBUG_LEVEL} "${text}")
+    endif()
+endmacro()
+
+macro(__cspec_debug_fn)
+     __cspec_debug("${CMAKE_CURRENT_FUNCTION}(${ARGV})")
+endmacro()
+
+macro(__cspec_arg_parse)
+    cmake_parse_arguments(_cspec_arg_parse "" "" "FLAGS;VALUES;MULTI;ARGS" ${ARGN})
+    __cspec_debug_fn(${_cspec_arg_parse_ARGS})
+    cmake_parse_arguments("${CMAKE_CURRENT_FUNCTION}" "${_cspec_arg_parse_OPTIONS}" "${_cspec_arg_parse_VALUES}" "${_cspec_arg_parse_MULTI}" ${_cspec_arg_parse_ARGS})
+    set(arg_prefix "${CMAKE_CURRENT_FUNCTION}_")
+endmacro()
+
+# function(__cspec_set_property)
+#     __cspec_debug("__cspec_set_property(${ARGV})")
+#     set(options)
+#     set(oneValueArgs)
+#     set(multiValueArgs FILES)
+#     cmake_parse_arguments(PARSE_ARGV 0 __cspec_set_property_ARG "${options}" "${oneValueArgs}" "${multiValueArgs}")
+# endfunction()
+
+macro(__cspec_get_var out_varname cspec_varname)
+    if(DEFINED CSPEC_${cspec_varname})
+        set(${out_varname} ${CSPEC_${cspec_varname}})
+    elseif(DEFINED ENV{CSPEC_${cspec_varname}})
+        set(${out_varname} $ENV{CSPEC_${cspec_varname}})
+    elseif(DEFINED CSPEC_DEFAULT_${cspec_varname})
+        set(${out_varname} ${CSPEC_DEFAULT_${cspec_varname}})
+    else()
+        set(${out_varname} "")
+    endif()
+endmacro()
+
+macro(__cspec_error text)
+    message(FATAL_ERROR "[CSPEC ERROR]: ${text}")
+endmacro()
+
+# [Test Discovery]
+
+function(cspec_test_discoverer)
+    message("CALLED DEFAULT DISCOVERY FN! ${ARGV}")
+
+    __cspec_arg_parse(VALUES FILES ARGS ${ARGN})
+
+    foreach(file ${${arg_prefix}FILES})
+        message("FILE: ${file}")
     endforeach()
+endfunction()
+
+# Responsibility of discoverer is to populate these properties (in the requested scope):
+# - CMAKE_TEST_FUNCTIONS_<ID>=[.;.]
+# - CMAKE_TEST_SETUP_FUNCTIONS_<ID>=[.;.]
+# - CMAKE_TEST_TEARDOWN_FUNCTIONS_<ID>=[.;.]
+# - CMAKE_FILE_SETUP_FUNCTIONS_<ID>=[.;.]
+# - CMAKE_FILE_TEARDOWN_FUNCTIONS_<ID>=[.;.]
+function(cspec_discover_tests)
+    if(NOT DEFINED CSPEC_DEFAULT_DISCOVERER)
+        set(CSPEC_DEFAULT_DISCOVERER cspec_test_discoverer)
+    endif()
+
+    __cspec_get_var(discovery_fn DISCOVERER)
+    if(discovery_fn)
+        message("DISCOVERER: ${discovery_fn}")
+        cmake_language(CALL ${discovery_fn} ${ARGV})
+    else()
+        __cspec_error("No test discoverer found")
+    endif()
+endfunction()
+
+# [Main Functions]
+
+# hello, world!
+function(add_cspec_suite)
+    __cspec_arg_parse(VALUES FILES ARGS ${ARGN})
+
+    cspec_discover_tests(FILES ${${arg_prefix}FILES})
 endfunction()
