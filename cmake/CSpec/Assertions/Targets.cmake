@@ -1,0 +1,7 @@
+function(__cspec_assert_be_target not actual)
+    if(not AND TARGET "${actual}")
+        expect_fail("Expected target '${actual}' not to exist")
+    elseif(NOT TARGET "${actual}")
+        expect_fail("Expected target '${actual}' to exist")
+    endif()
+endfunction()
