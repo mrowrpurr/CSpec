@@ -7,6 +7,14 @@ function(add_cspec_suite)
         __cspec_get_var(${arg_prefix}SCOPE SCOPE DIRECTORY)
     endif()
 
+    if(NOT "${arg_prefix}FILES")
+        set(${arg_prefix}FILES "${${arg_prefix}UNPARSED_ARGUMENTS}")
+    endif()
+
+    if(NOT "${arg_prefix}FILES")
+        message(WARNING "No spec files provided to add_cspec_suite")
+    endif()
+
     # Built-in discoverer
     include("${CSpecModuleIncludes}/Discoverers/Default.cmake")
 

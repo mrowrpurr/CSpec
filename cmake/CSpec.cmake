@@ -3,4 +3,4 @@ get_filename_component(CSpecModuleIncludes "${CSpecModulePath}" DIRECTORY)
 string(APPEND CSpecModuleIncludes /CSpec)
 
 include("${CSpecModuleIncludes}/Common.cmake")
-include("${CSpecModuleIncludes}/Include.cmake")
+include("${CSpecModuleIncludes}/AddCSpecSuite.cmake")

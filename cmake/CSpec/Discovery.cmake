@@ -1,6 +1,7 @@
 # Responsibility of discoverer is to populate these properties (in the requested scope):
 # - CSPEC_TEST_FILES=[...]
 # - CSPEC_TEST_FUNCTIONS_<ID>=[.;.]
+# - CSPEC_SKIP_TEST_FUNCTIONS_<ID>=[.;.]
 # - CSPEC_TEST_SETUP_FUNCTIONS_<ID>=[.;.]
 # - CSPEC_TEST_TEARDOWN_FUNCTIONS_<ID>=[.;.]
 # - CSPEC_FILE_SETUP_FUNCTIONS_<ID>=[.;.]
