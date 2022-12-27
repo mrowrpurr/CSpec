@@ -1,0 +1,38 @@
+set(CSpecVersion 0.2.0)
+
+if(NOT DEFINED CSPEC_DEBUG_LEVEL)
+    set(CSPEC_DEBUG_LEVEL TRACE)
+endif()
+
+macro(__cspec_debug text)
+    if(CSPEC_DEBUG)
+        message(${CSPEC_DEBUG_LEVEL} "${text}")
+    endif()
+endmacro()
+
+macro(__cspec_error text)
+    message(FATAL_ERROR "[CSPEC ERROR]: ${text}")
+endmacro()
+
+macro(__cspec_debug_fn)
+     __cspec_debug("${CMAKE_CURRENT_FUNCTION}(${ARGV})")
+endmacro()
+
+macro(__cspec_arg_parse)
+    cmake_parse_arguments(_cspec_arg_parse "" "" "FLAGS;VALUES;MULTI;ARGS" ${ARGN})
+    __cspec_debug_fn(${_cspec_arg_parse_ARGS})
+    cmake_parse_arguments("${CMAKE_CURRENT_FUNCTION}" "${_cspec_arg_parse_OPTIONS}" "${_cspec_arg_parse_VALUES}" "${_cspec_arg_parse_MULTI}" ${_cspec_arg_parse_ARGS})
+    set(arg_prefix "${CMAKE_CURRENT_FUNCTION}_")
+endmacro()
+
+macro(__cspec_get_var out_varname cspec_varname default_value)
+    if(DEFINED CSPEC_${cspec_varname})
+        set(${out_varname} ${CSPEC_${cspec_varname}})
+    elseif(DEFINED ENV{CSPEC_${cspec_varname}})
+        set(${out_varname} $ENV{CSPEC_${cspec_varname}})
+    elseif(DEFINED CSPEC_DEFAULT_${cspec_varname})
+        set(${out_varname} ${CSPEC_DEFAULT_${cspec_varname}})
+    else()
+        set(${out_varname} "${default_value}")
+    endif()
+endmacro()
