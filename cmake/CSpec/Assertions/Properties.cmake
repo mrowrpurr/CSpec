@@ -1,0 +1,31 @@
+# TODO make these all macros for expect_fail to work!
+
+macro(ASSERT_PROPERTY_EQUAL expected property_name)
+    get_property(__cspec_assert_property_property_value ${ARGN} PROPERTY "${property_name}")
+    if(NOT "${__cspec_assert_property_property_value}" STREQUAL "${expected}")
+        separate_arguments(__cspec_assert_property_args NATIVE_COMMAND "${ARGN}")
+        string(REGEX REPLACE ";" " " __cspec_assert_property_args "${args}")
+        expect_fail("Expected property '${property_name}' of ${__cspec_assert_property_args} to equal '${expected}' but was '${__cspec_assert_property_property_value}'")
+    endif()
+endmacro()
+
+macro(__expect_be_property positive expected property_name)
+    list(APPEND __expect_be_property_args ${ARGN})
+    list(GET __expect_be_property_args 0 __expect_be_property_first)
+    if("${__expect_be_property_first}" STREQUAL "of")
+        list(POP_FRONT __expect_be_property_args)
+    endif()
+    if("${positive}")
+
+        # ASSERT_PROPERTY_EQUAL("${expected}" "${property_name}" ${__expect_be_property_args})
+        get_property(__cspec_assert_property_property_value ${__expect_be_property_args} PROPERTY "${property_name}")
+        if(NOT "${__cspec_assert_property_property_value}" STREQUAL "${expected}")
+            separate_arguments(__expect_be_property_args NATIVE_COMMAND "${__expect_be_property_args}")
+            string(REGEX REPLACE ";" " " __expect_be_property_args "${__expect_be_property_args}")
+            expect_fail("Expected property '${property_name}' of ${__expect_be_property_args} to equal '${expected}' but was '${__cspec_assert_property_property_value}'")
+        endif()
+
+    else()
+        message(FATAL_ERROR "be_property does not currently support 'not'")
+    endif()
+endmacro()
