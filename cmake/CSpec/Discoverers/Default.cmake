@@ -2,8 +2,6 @@ function(cspec_test_discoverer)
     __cspec_arg_parse(VALUES SCOPE MULTI FILES ARGS ${ARGN})
     foreach(file ${${arg_prefix}FILES})
 
-        message("FILE: ${file}")
-
         file(REAL_PATH "${file}" file_path)
         set_property(${${arg_prefix}SCOPE} APPEND PROPERTY CSPEC_TEST_FILES ${file_path})
 
