@@ -1,106 +1,11 @@
 # Responsibility of discoverer is to populate these properties (in the requested scope):
-# - CMAKE_TEST_FUNCTIONS_<ID>=[.;.]
-# - CMAKE_TEST_SETUP_FUNCTIONS_<ID>=[.;.]
-# - CMAKE_TEST_TEARDOWN_FUNCTIONS_<ID>=[.;.]
-# - CMAKE_FILE_SETUP_FUNCTIONS_<ID>=[.;.]
-# - CMAKE_FILE_TEARDOWN_FUNCTIONS_<ID>=[.;.]
+# - CSPEC_TEST_FILES=[...]
+# - CSPEC_TEST_FUNCTIONS_<ID>=[.;.]
+# - CSPEC_TEST_SETUP_FUNCTIONS_<ID>=[.;.]
+# - CSPEC_TEST_TEARDOWN_FUNCTIONS_<ID>=[.;.]
+# - CSPEC_FILE_SETUP_FUNCTIONS_<ID>=[.;.]
+# - CSPEC_FILE_TEARDOWN_FUNCTIONS_<ID>=[.;.]
 function(cspec_discover_tests)
     __cspec_get_var(discovery_fn DISCOVERER "cspec_test_discoverer")
-    if(discovery_fn)
-        cmake_language(CALL ${discovery_fn} ${ARGV})
-    else()
-        __cspec_error("No test discoverer found")
-    endif()
-endfunction()
-
-function(cspec_test_discoverer)
-    __cspec_arg_parse(VALUES FILES SCOPE ARGS ${ARGN})
-    foreach(file ${${arg_prefix}FILES})
-        set_property(${${arg_prefix}SCOPE} APPEND PROPERTY CSPEC_FILES ${file})
-        file(REAL_PATH "${file}" file_path)
-
-        # Get all commands (built-in and custom functions)
-        message("looking at ${file_path}")
-        execute_process(COMMAND "${CMAKE_COMMAND}" "-DCSPEC_FILE=${file_path}" -P "${CSpecModuleIncludes}/bin/PrintFileGlobalPropertyCommands.cmake" OUTPUT_VARIABLE output)
-        string(STRIP "${output}" output)
-
-        # Get all of the discovery patterns for: test functions, setup functions, etc
-        __cspec_get_var(test_fn_patterns TEST_FUNCTION_PATTERNS "^test_")
-        __cspec_get_var(setup_fn_patterns SETUP_FUNCTION_PATTERNS "^setup")
-        __cspec_get_var(teardown_fn_patterns TEARDOWN_FUNCTION_PATTERNS "^teardown")
-        __cspec_get_var(file_setup_fn_patterns FILE_SETUP_FUNCTION_PATTERNS "^suite_setup")
-        __cspec_get_var(file_teardown_fn_patterns FILE_TEARDOWN_FUNCTION_PATTERNS "^suite_teardown")
-
-        # Get all of the test functions, setup functions, etc
-        set(test_fns "")
-        set(setup_fns "")
-        set(teardown_fns "")
-        set(file_setup_fns "")
-        set(file_teardown_fns "")
-
-        # Look for all the things!
-        foreach(command ${output})
-            set(command_matched false)
-            # Test Patterns
-            foreach(pattern ${test_fn_patterns})
-                if(command MATCHES "${pattern}")
-                    list(APPEND test_fns "${command}")
-                    set(command_matched true)
-                    break()
-                endif()
-            endforeach()
-            if(command_matched)
-                break()
-            endif()
-            # Setup Patterns
-            foreach(pattern ${setup_fn_patterns})
-                if(command MATCHES "${pattern}")
-                    list(APPEND setup_fns "${command}")
-                    set(command_matched true)
-                    break()
-                endif()
-            endforeach()
-            if(command_matched)
-                break()
-            endif()
-            # Teardown Patterns
-            foreach(pattern ${teardown_fn_patterns})
-                if(command MATCHES "${pattern}")
-                    list(APPEND teardown_fns "${command}")
-                    set(command_matched true)
-                    break()
-                endif()
-            endforeach()
-            if(command_matched)
-                break()
-            endif()
-            # File Setup Patterns
-            foreach(pattern ${file_setup_fn_patterns})
-                if(command MATCHES "${pattern}")
-                    list(APPEND file_setup_fns "${command}")
-                    set(command_matched true)
-                    break()
-                endif()
-            endforeach()
-            if(command_matched)
-                break()
-            endif()
-            # File Teardown Patterns
-            foreach(pattern ${file_teardown_fn_patterns})
-                if(command MATCHES "${pattern}")
-                    list(APPEND file_teardown_fns "${command}")
-                    set(command_matched true)
-                    break()
-                endif()
-            endforeach()
-        endforeach()
-
-        # Assign to properties associated with this test by unique ID (SHA1 of REAL_PATH)
-        string(SHA1 file_id "${file_path}")
-        set_property(${${arg_prefix}SCOPE} APPEND PROPERTY CSPEC_TEST_FUNCTIONS_${file_id} "${test_fns}")
-        set_property(${${arg_prefix}SCOPE} APPEND PROPERTY CSPEC_TEST_SETUP_FUNCTIONS_${file_id} "${setup_fns}")
-        set_property(${${arg_prefix}SCOPE} APPEND PROPERTY CSPEC_TEST_TEARDOWN_FUNCTIONS_${file_id} "${teardown_fns}")
-        set_property(${${arg_prefix}SCOPE} APPEND PROPERTY CSPEC_TEST_FILE_SETUP_FUNCTIONS_${file_id} "${file_setup_fns}")
-        set_property(${${arg_prefix}SCOPE} APPEND PROPERTY CSPEC_TEST_FILE_TEARDOWN_FUNCTIONS_${file_id} "${file_teardown_fns}")
-    endforeach()
+    cmake_language(CALL ${discovery_fn} ${ARGV})
 endfunction()

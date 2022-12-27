@@ -3,4 +3,5 @@ include(CSpec)
 # set(CMAKE_MESSAGE_LOG_LEVEL TRACE)
 set(CSPEC_DEBUG_LEVEL STATUS)
 set(CSPEC_DEBUG ON)
-add_cspec_suite(FILES spec/HelloCSpec.cmake) # TODO auto-search test/ and spec/ folders
+set(CSPEC_RUNNERS cspec_runner_immediate)
+add_cspec_suite(SCOPE GLOBAL FILES spec/HelloCSpec.cmake spec/AnotherSpec.cmake) # TODO auto-search test/ and spec/ folders

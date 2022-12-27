@@ -3,23 +3,6 @@ cmake_policy(SET CMP0057 NEW) # IN_LIST support
 cmake_policy(SET CMP0011 NEW) # This appears when enabling 57
 set(CSpecModulePath "${CMAKE_CURRENT_LIST_FILE}")
 
-function(__cspec_pretty_print_output raw_output)
-    if(NOT "${raw_output}" STREQUAL "")
-        string(REGEX REPLACE "\n" ";" output_lines "${raw_output}")
-        set(i 0)
-        foreach(line ${output_lines})
-            if(NOT line MATCHES "^[ ]+$")
-                if(i EQUAL 0)
-                    string(APPEND output "    ${line}")
-                else()
-                    string(APPEND output "\n    ${line}")
-                endif()
-            endif()
-            math(EXPR i "${i}+1")
-        endforeach()
-        message("${output}")
-    endif()
-endfunction()
 
 function(__cpec_test_suite_end)
     if(LIST_TEST_FUNCTIONS)
