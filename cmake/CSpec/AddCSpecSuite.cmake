@@ -7,11 +7,11 @@ function(add_cspec_suite)
         __cspec_get_var(${arg_prefix}SCOPE SCOPE DIRECTORY)
     endif()
 
-    if(NOT "${arg_prefix}FILES")
+    if("${${arg_prefix}FILES}" STREQUAL "")
         set(${arg_prefix}FILES "${${arg_prefix}UNPARSED_ARGUMENTS}")
     endif()
 
-    if(NOT "${arg_prefix}FILES")
+    if("${${arg_prefix}FILES}" STREQUAL "")
         message(WARNING "No spec files provided to add_cspec_suite")
     endif()
 

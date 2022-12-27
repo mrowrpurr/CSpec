@@ -1,6 +1,9 @@
 function(cspec_test_discoverer)
     __cspec_arg_parse(VALUES SCOPE MULTI FILES ARGS ${ARGN})
     foreach(file ${${arg_prefix}FILES})
+
+        message("FILE: ${file}")
+
         file(REAL_PATH "${file}" file_path)
         set_property(${${arg_prefix}SCOPE} APPEND PROPERTY CSPEC_TEST_FILES ${file_path})
 
@@ -13,8 +16,8 @@ function(cspec_test_discoverer)
         __cspec_get_var(skip_test_fn_patterns SKIP_TEST_FUNCTION_PATTERNS "^xtest_;^xit_")
         __cspec_get_var(setup_fn_patterns SETUP_FUNCTION_PATTERNS "^setup")
         __cspec_get_var(teardown_fn_patterns TEARDOWN_FUNCTION_PATTERNS "^teardown")
-        __cspec_get_var(file_setup_fn_patterns FILE_SETUP_FUNCTION_PATTERNS "^suite_setup")
-        __cspec_get_var(file_teardown_fn_patterns FILE_TEARDOWN_FUNCTION_PATTERNS "^suite_teardown")
+        __cspec_get_var(file_setup_fn_patterns FILE_SETUP_FUNCTION_PATTERNS "^suite_setup;^file_setup")
+        __cspec_get_var(file_teardown_fn_patterns FILE_TEARDOWN_FUNCTION_PATTERNS "^suite_teardown;^file_teardown")
 
         # Get all of the test functions, setup functions, etc
         set(test_fns "")

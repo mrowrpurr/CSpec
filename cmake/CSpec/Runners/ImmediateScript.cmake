@@ -1,17 +1,8 @@
-# Immediately run all the tests! As part of the CMake generation. Fast feedback :)
-function(cspec_runner_immediate)
+# Run tests immediately as part of CMake configure, inside of a -P script
+# TODO: rename them to like: BUILD, CONFIGURE, and CTEST (and have an option to run suites (or tests?) in scripts)
+function(cspec_runner_immediate_script)
     __cspec_arg_parse(VALUES SCOPE ARGS ${ARGN})
     get_property(test_files ${${arg_prefix}SCOPE} PROPERTY CSPEC_TEST_FILES)
-
-    # Should have an option to recreate for each test run (or add different amounts of isolation)
-    set(cmake_folder "$ENV{TEMP}/CSpec/CMakeBuildFolderForSpecRuns")
-    # This makes it WICKED SLOW:
-    # set(cmake_folder "$ENV{TEMP}/CSpec/BuildFolders/${file_id}/${test_fn}")
-    # ^ maybe make it a config option for true isolation if folks need it
-    if(NOT IS_DIRECTORY "${cmake_folder}")
-        file(MAKE_DIRECTORY "${cmake_folder}")
-    endif()
-    file(COPY "${CSpecModuleIncludes}/bin/RunAsConfigure/CMakeLists.txt" DESTINATION "${cmake_folder}")
 
     set(passed_count 0)
     set(failed_count 0)
@@ -21,10 +12,8 @@ function(cspec_runner_immediate)
         get_property(skip_test_fns ${${arg_prefix}SCOPE} PROPERTY CSPEC_SKIP_TEST_FUNCTIONS_${file_id})
         get_property(setup_fns ${${arg_prefix}SCOPE} PROPERTY CSPEC_TEST_SETUP_FUNCTIONS_${file_id})
         get_property(teardown_fns ${${arg_prefix}SCOPE} PROPERTY CSPEC_TEST_TEARDOWN_FUNCTIONS_${file_id})
-
-        # TODO: file setup/teardown
-        # get_property(file_setup_fns ${${arg_prefix}SCOPE} PROPERTY CSPEC_TEST_FILE_SETUP_FUNCTIONS_${file_id})
-        # get_property(file_teardown_fns ${${arg_prefix}SCOPE} PROPERTY CSPEC_TEST_FILE_TEARDOWN_FUNCTIONS_${file_id})
+        get_property(file_setup_fns ${${arg_prefix}SCOPE} PROPERTY CSPEC_TEST_FILE_SETUP_FUNCTIONS_${file_id})
+        get_property(file_teardown_fns ${${arg_prefix}SCOPE} PROPERTY CSPEC_TEST_FILE_TEARDOWN_FUNCTIONS_${file_id})
 
         get_filename_component(test_filename "${file_path}" NAME_WLE)
 
@@ -39,10 +28,10 @@ function(cspec_runner_immediate)
             __cspec_output("    [SKIP] ${skipped_test_fn}")
         endforeach()
 
+        # TODO: setup, teardown
+
         foreach(test_fn ${test_fns})
-
-            execute_process(COMMAND "${CMAKE_COMMAND}" "-DCSPEC_INCLUDE_DIR=${CSpecModuleIncludes}" "-DCSPEC_FILE=${file_path}" "-DCSPEC_TEST_FUNCTION=${test_fn}" "-DCSPEC_SETUP_FNS=${setup_fns}" "-DCSPEC_TEARDOWN_FNS=${teardown_fns}" "." WORKING_DIRECTORY "${cmake_folder}" OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr RESULT_VARIABLE result)
-
+            execute_process(COMMAND "${CMAKE_COMMAND}" "-DCSPEC_FILE=${file_path}" "-DCSPEC_TEST_FUNCTION=${test_fn}" -P "${CSpecModuleIncludes}/bin/RunFileTestFunction.cmake" OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr RESULT_VARIABLE result)
             if(result EQUAL 0)
                 math(EXPR passed_count "${passed_count}+1")
                 __cspec_output("    [PASS] ${test_fn}")
