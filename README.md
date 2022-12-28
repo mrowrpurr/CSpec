@@ -1,7 +1,12 @@
-#### TODO
-
-- [ ] Make work with `CMAKE_CURRENT_SOURCE_DIR` and `CMAKE_SOURCE_DIR`
-- [ ] Try using `include` instead of making temp files!
+> _This is a fun, silly prototype._
+>
+> _But I'm actually using it to fully test-drive a CMake project._
+>
+> _Check back when 0.2 is available:_
+> - _supports easy generation of CMake projects and building their targets_
+> - _includes various `expect(...)`-style assertions_
+>
+> _Coming soon!_
 
 ---
 
