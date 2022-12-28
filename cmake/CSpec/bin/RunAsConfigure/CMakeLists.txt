@@ -1,25 +1,16 @@
 cmake_minimum_required(VERSION 3.21)
-project("CSpec Testing Project")
+
+project("CSpec Testing Project" VERSION 1.2.3)
 
 set(CSpecAssertionsIncludeDir "${CSPEC_INCLUDE_DIR}/Assertions")
-
-function(include_assertion assertion)
-    set(assertion_path "${CSpecAssertionsIncludeDir}/${assertion}")
-    if(NOT assertion_path MATCHES .cmake$)
-        string(APPEND assertion_path ".cmake")
-    endif()
-    if(EXISTS "${assertion_path}")
-        include("${assertion_path}")
-    else()
-        message(FATAL_ERROR "Assertion not found: ${assertion} (${assertion_path})")
-    endif()
-endfunction()
+include("${CSPEC_INCLUDE_DIR}/bin/RunAsConfigure/Helpers.cmake")
 
 include("${CSPEC_FILE}")
 
 if(NOT EXISTS DISABLE_EXPECT OR NOT DISABLE_EXPECT)
     include("${CSpecAssertionsIncludeDir}/Expect.cmake")
 endif()
+
 if(NOT EXISTS DEFAULT_ASSERTIONS OR DEFAULT_ASSERTIONS)
     include("${CSpecAssertionsIncludeDir}/DefaultAssertions.cmake")
 endif()

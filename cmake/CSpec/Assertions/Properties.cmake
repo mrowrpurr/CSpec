@@ -9,6 +9,7 @@ macro(ASSERT_PROPERTY_EQUAL expected property_name)
     endblock()
 endmacro()
 
+register_expect_matcher(be_property)
 macro(__expect_be_property positive expected property_name)
     block()
         list(APPEND args ${ARGN})

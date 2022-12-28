@@ -10,6 +10,7 @@ macro(ASSERT_NOT_TARGET target)
     endif()
 endmacro()
 
+register_expect_matcher(be_target)
 macro(__expect_be_target positive actual)
     if(${positive})
         ASSERT_TARGET("${actual}")
