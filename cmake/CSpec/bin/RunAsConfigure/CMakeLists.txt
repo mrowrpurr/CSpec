@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project("CSpec Testing Project" VERSION 1.2.3)
+project("Default Test Project from CSpec")
 
 set(CSpecAssertionsIncludeDir "${CSPEC_INCLUDE_DIR}/Assertions")
 include("${CSPEC_INCLUDE_DIR}/bin/RunAsConfigure/Helpers.cmake")
