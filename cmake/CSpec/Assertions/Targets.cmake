@@ -11,7 +11,7 @@ macro(ASSERT_NOT_TARGET target)
 endmacro()
 
 macro(__expect_be_target positive actual)
-    if(positive)
+    if(${positive})
         ASSERT_TARGET("${actual}")
     else()
         ASSERT_NOT_TARGET("${actual}")
