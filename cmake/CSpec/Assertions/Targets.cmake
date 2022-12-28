@@ -1,22 +1,19 @@
-# TODO make these all macros for expect_fail to work!
-
-function(ASSERT_TARGET target)
+macro(ASSERT_TARGET target)
     if(NOT TARGET "${target}")
         expect_fail("Expected target '${target}' to exist")
     endif()
-endfunction()
+endmacro()
 
-function(ASSERT_NOT_TARGET target)
+macro(ASSERT_NOT_TARGET target)
     if(TARGET "${target}")
         expect_fail("Expected target '${target}' not to exist")
     endif()
-endfunction()
+endmacro()
 
-# Rename these to something 'expect'-ish
-function(__expect_be_target positive actual)
+macro(__expect_be_target positive actual)
     if(positive)
         ASSERT_TARGET("${actual}")
     else()
         ASSERT_NOT_TARGET("${actual}")
     endif()
-endfunction()
+endmacro()

@@ -1,5 +1,3 @@
-# TODO make these all macros for expect_fail to work!
-
 macro(ASSERT_PROPERTY_EQUAL expected property_name)
     block()
         get_property(property_value ${ARGN} PROPERTY "${property_name}")
