@@ -1,3 +1,5 @@
+# TODO - so folks can use an option() or CMakePresets preset for using this, only run on -DCSPEC_RUN_SPECS or something
+
 # Immediately run all the tests! As part of the CMake generation. Fast feedback :)
 function(cspec_runner_immediate)
     __cspec_arg_parse(VALUES SCOPE ARGS ${ARGN})
@@ -34,9 +36,11 @@ function(cspec_runner_immediate)
             __cspec_output("    [SKIP] ${skipped_test_fn}")
         endforeach()
 
+        string(REGEX REPLACE "\\\\" "/" safe_temp_folder_path "$ENV{TEMP}")
+
         foreach(test_fn ${test_fns})
 
-            execute_process(COMMAND "${CMAKE_COMMAND}" "-DCSPEC_INCLUDE_DIR=${CSpecModuleIncludes}" "-DCSPEC_FILE=${file_path}" "-DCSPEC_TEST_FUNCTION=${test_fn}" "-DCSPEC_SETUP_FNS=${setup_fns}" "-DCSPEC_TEARDOWN_FNS=${teardown_fns}" "." WORKING_DIRECTORY "${cmake_folder}" OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr RESULT_VARIABLE result)
+            execute_process(COMMAND "${CMAKE_COMMAND}" "-DCSPEC_TEMP_FOLDER=${safe_temp_folder_path}/CSpec/Temp" "-DCSPEC_FILE_ID=${file_id}" "-DCSPEC_INCLUDE_DIR=${CSpecModuleIncludes}" "-DCSPEC_FILE=${file_path}" "-DCSPEC_TEST_FUNCTION=${test_fn}" "-DCSPEC_SETUP_FNS=${setup_fns}" "-DCSPEC_TEARDOWN_FNS=${teardown_fns}" "." -B build WORKING_DIRECTORY "${cmake_folder}" OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr RESULT_VARIABLE result)
 
             if(result EQUAL 0)
                 math(EXPR passed_count "${passed_count}+1")

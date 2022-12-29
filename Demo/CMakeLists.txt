@@ -4,4 +4,4 @@ project(MySpecs)
 
 find_package(CSpec CONFIG REQUIRED)
 
-add_cspec_suite(MySpecs)
+# add_cspec_suite(MySpecs)

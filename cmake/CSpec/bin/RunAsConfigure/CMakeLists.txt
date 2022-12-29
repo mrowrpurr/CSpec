@@ -24,3 +24,5 @@ cmake_language(CALL "${CSPEC_TEST_FUNCTION}")
 foreach(fn ${CSPEC_TEARDOWN_FNS})
     cmake_language(CALL "${fn}")
 endforeach()
+
+set(___disable_warning "${CSPEC_FILE_ID}")
